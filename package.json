@@ -1,0 +1,47 @@
+{
+  "name": "minesweeper",
+  "version": "1.0.0",
+  "description": "A minesweeper game",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/diegomart2000/MineSweeper.git"
+  },
+  "keywords": [
+    "Nodejs",
+    "Mongo",
+    "Mongoose",
+    "Express"
+  ],
+  "author": "Diego Martinez",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/diegomart2000/MineSweeper/issues"
+  },
+  "homepage": "https://github.com/diegomart2000/MineSweeper#readme",
+  "dependencies": {
+    "autoprefixer": "6.4.1",
+    "axios": "^0.19.0",
+    "body-parser": "^1.19.0",
+    "chalk": "^2.4.2",
+    "connect-redis": "^3.4.0",
+    "cross-env": "2.0.1",
+    "dotenv": "^6.0.0",
+    "express": "^4.16.3",
+    "express-session": "^1.15.6",
+    "helmet": "^3.16.0",
+    "js-cookie": "^2.2.0",
+    "lodash": "^4.17.11",
+    "moment": "2.22.2",
+    "mongoose": "^5.5.12",
+    "passport": "^0.4.0",
+    "passport-spotify": "^1.0.1",
+    "pug": "^2.0.3",
+    "query-string": "^6.1.0",
+    "redis": "^2.8.0",
+    "rimraf": "2.5.4"
+  }
+}
