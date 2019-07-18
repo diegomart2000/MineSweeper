@@ -1,3 +1,8 @@
+const readline = require('readline');
+const rl = readline.createInterface({
+  input: process.stdin,
+  output: process.stdout
+});
 
 // A Function to initialise the game
 const buildBoard = (size) => {
@@ -29,7 +34,16 @@ const isValid = (row, col, size) => {
 
 // A Utility Function to check whether given cell (row, col)
 // has a mine or not.
-const isMine = (row, col, mines) => !!mines.find(mine => mine.row === row && mine.col === col);
+const isMine = (row, col, map) => map[row][col] === true;
+
+const mapMines = (mines, size) => {
+  const map = buildBoard(size);
+  mines.forEach(mine => map[mine.row][mine.col] = true);
+  map.isMap = true;
+  map.list = mines;
+
+  return map;
+};
 
 // A Function to count the number of
 // mines in the adjacent cells
@@ -78,7 +92,7 @@ const countAdjacentMines = (row, col, mines, size) => {
   //----------- 3rd Neighbour (East) ------------
 
   // Only process this cell if this is a valid one
-  if (isValid(row, col + 1, size) == true) {
+  if (isValid(row, col + 1, size)) {
     if (isMine(row, col + 1, mines))
       count++;
   }
@@ -131,14 +145,17 @@ const countAdjacentMines = (row, col, mines, size) => {
 const moveRecursive = (myBoard, mines, row, col, movesLeft) => {
   const size = myBoard.length;
 
+  console.log('moveRecursive mines', mines);
   // Base Case of Recursion
-  if (myBoard[row][col] != '-') {
+  // To avoid checking one that has already revealed
+  if (myBoard[row][col] !== '-' && myBoard[row][col] !== '*') {
     return false;
   }
 
   // You opened a mine
   // You are going to lose
   if (isMine(row, col, mines)) {
+    console.log('moveRecursive is mine')
     // Game Over
     return true;
   }
@@ -149,7 +166,7 @@ const moveRecursive = (myBoard, mines, row, col, movesLeft) => {
     // Calculate the number of adjacent mines and put it
     // on the board.
     const count = countAdjacentMines(row, col, mines, size);
-    movesLeft--;
+    movesLeft.dec();
 
     myBoard[row][col] = count;
 
@@ -249,7 +266,7 @@ const getRandomInt = (max) => Math.floor(Math.random() * (max));
 
 // A Function to place the mines randomly
 // on the board
-const placeMines = (size, minesCount) => {
+const placeMines = (size, minesCount, board) => {
   const mark = {};
   const mines = [];
 
@@ -268,11 +285,100 @@ const placeMines = (size, minesCount) => {
       // Place the mine
       mark[`${x}-${y}`] = true;
 
+      if (board) board[mines[i].row][mines[i].col] = '*';
       i++;
     }
   }
 
-  return mines;
+  return mapMines(mines, size);
+}
+
+// To place a flag in the board
+const placeFlag = (row, col, board) => {
+  if (!isValid(row, col, board.length)) return board;
+
+  const flag = `${board[row][col] || ''}?`;
+
+  // do not mutate original
+  const result = board.concat();
+  result[row]= result[row].concat();
+
+  result[row][col] = flag;
+  return result;
+};
+
+// To reveal where the mines are
+const closeBoard = (mines, board) => {
+  for (i = 0; i < mines.length; i++) {
+    board[mines[i].row][mines[i].col] = '*';
+  }
+}
+
+const askNumber = question => new Promise(resolve => rl
+  .question(`${question} > `, (answer) => resolve(answer))
+).then(parseInt);
+
+const askCoords = question => new Promise(resolve => rl
+  .question(`${question} > `, (answer) => resolve(answer))
+).then(answer => answer.split(/\s/).map(coord => parseInt(coord)));
+
+class Moves {
+  constructor(movesLeft) {
+    this.movesLeft = movesLeft;
+  }
+
+  dec() {
+    this.movesLeft--;
+  }
+
+  value() {
+    return this.movesLeft;
+  }
+
+  toString() {
+    return `[${this.movesLeft}]`;
+  }
+}
+
+const play = async () => {
+  let gameOver = false;
+
+  console.log('Setting upt the game...');
+
+  const size = await askNumber('What is the board size you like?');
+  const minesCount = await askNumber('How many mines we should hide?');
+
+  console.log(`Building board of ${size} by ${size} and ${minesCount} mines`);
+
+  const myBoard = buildBoard(size);
+  const mines = placeMines(size, minesCount);
+
+  console.table(myBoard);
+
+  const movesLeft = new Moves(size * size - minesCount);
+
+  while (!gameOver) {
+    const move = await askCoords(`Moves left ${movesLeft} - Whats your move? [row, col]`);
+    console.log('move', move);
+
+    gameOver = moveRecursive(myBoard, mines, move[0], move[1], movesLeft);
+    console.table(myBoard);
+
+    if ( gameOver ) {
+      closeBoard(mines.list, myBoard);
+      console.table(myBoard);
+
+      console.log('Game Over');
+      continue;
+    }
+    // const flag = await askCoords('Like to put a flag? [row, col]');
+    // console.log('flag', flag);
+  }
+
+
+
+  rl.close();
 }
 
 
+play()
