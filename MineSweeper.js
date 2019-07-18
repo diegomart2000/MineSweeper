@@ -133,7 +133,7 @@ const moveRecursive = (myBoard, mines, row, col, movesLeft) => {
 
   // Base Case of Recursion
   // To avoid checking one that has already revealed
-  if (myBoard[row][col] !== '-' && myBoard[row][col] !== MINE) {
+  if (myBoard[row][col] !== '-' && myBoard[row][col] !== MINE && myBoard[row][col] !== FLAG) {
     return false;
   }
 
@@ -240,17 +240,18 @@ const placeMines = (size, minesCount, board) => {
 }
 
 // To place a flag in the board
-const placeFlag = (row, col, board) => {
-  if (!isValid(row, col, board.length)) return board;
+const toggleFlag = (row, col, board) => {
+  if (!isValid(row, col, board.length)) return;
+  if (typeof board[row][col] !== 'string') return; // Already revealed
 
-  const flag = `${board[row][col] || ''}${FLAG}`;
+  const remove = board[row][col].indexOf(FLAG) > -1;
+  const flag = remove
+    ? board[row][col].replace(FLAG, '')
+    : `${board[row][col].replace('-', '')}${FLAG}`;
 
-  // do not mutate original
-  const result = board.concat();
-  result[row]= result[row].concat();
+  board[row][col] = flag;
 
-  result[row][col] = flag;
-  return result;
+  return remove;
 };
 
 // To reveal where the mines are
@@ -285,7 +286,7 @@ const askNumber = question => new Promise(resolve => rl
 
 const askCoords = question => new Promise(resolve => rl
   .question(`${question} > `, (answer) => resolve(answer))
-).then(answer => answer.split(/\s/).map(coord => parseInt(coord)));
+).then(answer => answer && answer.split(/\s/).map(coord => parseInt(coord)));
 
 
 
@@ -319,9 +320,14 @@ const play = async () => {
 
       console.log('Game Over');
       continue;
+    } else {
+      const flag = await askCoords('Like to put a flag? [row, col]');
+      console.log('flag', flag);
+      if ( flag ) {
+        toggleFlag(flag[0], flag[1], myBoard);
+        console.table(myBoard);
+      }
     }
-    // const flag = await askCoords('Like to put a flag? [row, col]');
-    // console.log('flag', flag);
   }
 
 
