@@ -4,6 +4,31 @@ const rl = readline.createInterface({
   output: process.stdout
 });
 
+const FLAG = '⛳';
+const MINE = '💣';
+
+/*
+Recur for all 8 adjacent cells
+
+    N.W   N   N.E
+      \   |   /
+          \  |  /
+    W----Cell----E
+         / | \
+       /   |  \
+    S.W    S   S.E
+
+Cell-->Current Cell (row, col)
+N -->  North        (row-1, col)
+S -->  South        (row+1, col)
+E -->  East         (row, col+1)
+W -->  West         (row, col-1)
+N.E--> North-East   (row-1, col+1)
+N.W--> North-West   (row-1, col-1)
+S.E--> South-East   (row+1, col+1)
+S.W--> South-West   (row+1, col-1)
+*/
+
 // A Function to initialise the game
 const buildBoard = (size) => {
   const board = [];
@@ -50,88 +75,49 @@ const mapMines = (mines, size) => {
 const countAdjacentMines = (row, col, mines, size) => {
   let count = 0;
 
-  /*
-      Count all the mines in the 8 adjacent
-      cells
-
-          N.W   N   N.E
-            \   |   /
-             \  |  /
-          W----Cell----E
-               / | \
-             /   |  \
-          S.W    S   S.E
-
-      Cell-->Current Cell (row, col)
-      N -->  North        (row-1, col)
-      S -->  South        (row+1, col)
-      E -->  East         (row, col+1)
-      W -->  West            (row, col-1)
-      N.E--> North-East   (row-1, col+1)
-      N.W--> North-West   (row-1, col-1)
-      S.E--> South-East   (row+1, col+1)
-      S.W--> South-West   (row+1, col-1)
-  */
-
   //----------- 1st Neighbour (North) ------------
-
-  // Only process this cell if this is a valid one
   if (isValid(row - 1, col, size)) {
     if (isMine(row - 1, col, mines))
       count++;
   }
 
   //----------- 2nd Neighbour (South) ------------
-
-  // Only process this cell if this is a valid one
   if (isValid(row + 1, col, size)) {
     if (isMine(row + 1, col, mines))
       count++;
   }
 
   //----------- 3rd Neighbour (East) ------------
-
-  // Only process this cell if this is a valid one
   if (isValid(row, col + 1, size)) {
     if (isMine(row, col + 1, mines))
       count++;
   }
 
   //----------- 4th Neighbour (West) ------------
-
-  // Only process this cell if this is a valid one
   if (isValid(row, col - 1, size)) {
     if (isMine(row, col - 1, mines))
       count++;
   }
 
   //----------- 5th Neighbour (North-East) ------------
-
-  // Only process this cell if this is a valid one
   if (isValid(row - 1, col + 1, size)) {
     if (isMine(row - 1, col + 1, mines))
       count++;
   }
 
   //----------- 6th Neighbour (North-West) ------------
-
-  // Only process this cell if this is a valid one
   if (isValid(row - 1, col - 1, size)) {
     if (isMine(row - 1, col - 1, mines))
       count++;
   }
 
   //----------- 7th Neighbour (South-East) ------------
-
-  // Only process this cell if this is a valid one
   if (isValid(row + 1, col + 1, size)) {
     if (isMine(row + 1, col + 1, mines))
       count++;
   }
 
   //----------- 8th Neighbour (South-West) ------------
-
-  // Only process this cell if this is a valid one
   if (isValid(row + 1, col - 1, size)) {
     if (isMine(row + 1, col - 1, mines))
       count++;
@@ -145,17 +131,15 @@ const countAdjacentMines = (row, col, mines, size) => {
 const moveRecursive = (myBoard, mines, row, col, movesLeft) => {
   const size = myBoard.length;
 
-  console.log('moveRecursive mines', mines);
   // Base Case of Recursion
   // To avoid checking one that has already revealed
-  if (myBoard[row][col] !== '-' && myBoard[row][col] !== '*') {
+  if (myBoard[row][col] !== '-' && myBoard[row][col] !== MINE) {
     return false;
   }
 
   // You opened a mine
   // You are going to lose
   if (isMine(row, col, mines)) {
-    console.log('moveRecursive is mine')
     // Game Over
     return true;
   }
@@ -171,87 +155,49 @@ const moveRecursive = (myBoard, mines, row, col, movesLeft) => {
     myBoard[row][col] = count;
 
     if (!count) {
-      /*
-      Recur for all 8 adjacent cells
-
-          N.W   N   N.E
-            \   |   /
-                \  |  /
-          W----Cell----E
-               / | \
-             /   |  \
-          S.W    S   S.E
-
-      Cell-->Current Cell (row, col)
-      N -->  North        (row-1, col)
-      S -->  South        (row+1, col)
-      E -->  East         (row, col+1)
-      W -->  West            (row, col-1)
-      N.E--> North-East   (row-1, col+1)
-      N.W--> North-West   (row-1, col-1)
-      S.E--> South-East   (row+1, col+1)
-      S.W--> South-West   (row+1, col-1)
-      */
-
       //----------- 1st Neighbour (North) ------------
-
-      // Only process this cell if this is a valid one
       if (isValid(row - 1, col, size)) {
         if (!isMine(row - 1, col, mines))
           moveRecursive(myBoard, mines, row - 1, col, movesLeft);
       }
 
       //----------- 2nd Neighbour (South) ------------
-
-      // Only process this cell if this is a valid one
       if (isValid(row + 1, col, size)) {
         if (!isMine(row + 1, col, mines))
           moveRecursive(myBoard, mines, row + 1, col, movesLeft);
       }
 
       //----------- 3rd Neighbour (East) ------------
-
-      // Only process this cell if this is a valid one
       if (isValid(row, col + 1, size)) {
         if (!isMine(row, col + 1, mines))
           moveRecursive(myBoard, mines, row, col + 1, movesLeft);
       }
 
       //----------- 4th Neighbour (West) ------------
-
-      // Only process this cell if this is a valid one
       if (isValid(row, col - 1, size)) {
         if (!isMine(row, col - 1, mines))
           moveRecursive(myBoard, mines, row, col - 1, movesLeft);
       }
 
       //----------- 5th Neighbour (North-East) ------------
-
-      // Only process this cell if this is a valid one
       if (isValid(row - 1, col + 1, size)) {
         if (!isMine(row - 1, col + 1, mines))
           moveRecursive(myBoard, mines, row - 1, col + 1, movesLeft);
       }
 
       //----------- 6th Neighbour (North-West) ------------
-
-      // Only process this cell if this is a valid one
       if (isValid(row - 1, col - 1, size)) {
         if (!isMine(row - 1, col - 1, mines))
           moveRecursive(myBoard, mines, row - 1, col - 1, movesLeft);
       }
 
       //----------- 7th Neighbour (South-East) ------------
-
-      // Only process this cell if this is a valid one
       if (isValid(row + 1, col + 1, size)) {
         if (!isMine(row + 1, col + 1, mines))
           moveRecursive(myBoard, mines, row + 1, col + 1, movesLeft);
       }
 
       //----------- 8th Neighbour (South-West) ------------
-
-      // Only process this cell if this is a valid one
       if (isValid(row + 1, col - 1, size)) {
         if (!isMine(row + 1, col - 1, mines))
           moveRecursive(myBoard, mines, row + 1, col - 1, movesLeft);
@@ -285,7 +231,7 @@ const placeMines = (size, minesCount, board) => {
       // Place the mine
       mark[`${x}-${y}`] = true;
 
-      if (board) board[mines[i].row][mines[i].col] = '*';
+      if (board) board[mines[i].row][mines[i].col] = MINE;
       i++;
     }
   }
@@ -297,7 +243,7 @@ const placeMines = (size, minesCount, board) => {
 const placeFlag = (row, col, board) => {
   if (!isValid(row, col, board.length)) return board;
 
-  const flag = `${board[row][col] || ''}?`;
+  const flag = `${board[row][col] || ''}${FLAG}`;
 
   // do not mutate original
   const result = board.concat();
@@ -310,18 +256,11 @@ const placeFlag = (row, col, board) => {
 // To reveal where the mines are
 const closeBoard = (mines, board) => {
   for (i = 0; i < mines.length; i++) {
-    board[mines[i].row][mines[i].col] = '*';
+    board[mines[i].row][mines[i].col] = MINE;
   }
 }
 
-const askNumber = question => new Promise(resolve => rl
-  .question(`${question} > `, (answer) => resolve(answer))
-).then(parseInt);
-
-const askCoords = question => new Promise(resolve => rl
-  .question(`${question} > `, (answer) => resolve(answer))
-).then(answer => answer.split(/\s/).map(coord => parseInt(coord)));
-
+// Handler to count moves on recursion
 class Moves {
   constructor(movesLeft) {
     this.movesLeft = movesLeft;
@@ -339,6 +278,16 @@ class Moves {
     return `[${this.movesLeft}]`;
   }
 }
+
+const askNumber = question => new Promise(resolve => rl
+  .question(`${question} > `, (answer) => resolve(answer))
+).then(parseInt);
+
+const askCoords = question => new Promise(resolve => rl
+  .question(`${question} > `, (answer) => resolve(answer))
+).then(answer => answer.split(/\s/).map(coord => parseInt(coord)));
+
+
 
 const play = async () => {
   let gameOver = false;
