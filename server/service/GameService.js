@@ -8,9 +8,13 @@ const Game = require('../model/Game');
 /**
  *
  */
-exports.create = async (userId, name, board, mines) => {
+exports.create = async (userId, name, size, quantity) => {
   try {
     log(`GameService : Game create [u: ${userId}, n: ${name}]`);
+    const board;
+    const mines;
+    const movesLeft;
+
     const game = new Game({ name, board, mines });
     await game.save();
 

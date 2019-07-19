@@ -3,9 +3,12 @@ const { ObjectId } = mongoose.Schema.Types;
 
 const schema = new mongoose.Schema({
   userId: ObjectId,
-  name: 'string',
-  board: 'array',
-  mines: 'array',
+  name: String,
+  size: Number,
+  quantity: Number,
+  board: Array,
+  mines: Array,
+  movesLeft: Number,
 });
 
 const Game = mongoose.model('Game', schema);
