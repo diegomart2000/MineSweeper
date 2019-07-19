@@ -5,7 +5,7 @@ const SALT = process.env.SALT;
 
 const UserService = require('../../service/UserService');
 
-const user = app => {
+const User = app => {
   app.post('/api/user/register', register);
   app.post('/api/user/login', login);
   app.get('/api/me', loginRequired, get);
@@ -47,4 +47,4 @@ const get = async (req, res) => {
   res.send(user);
 };
 
-module.exports = user;
+module.exports = User;
