@@ -92,17 +92,6 @@ Authorizarion: Bearer _TOKEN_HERE_
 }
 ```
 
-{
-  userId: ObjectId,
-  name: String,
-  size: Number,
-  quantity: Number,
-  board: Array,
-  mines: Array,
-  movesLeft: Number,
-  gameOver: Boolean,
-}
-
 ### Game
 `POST` `/api/game`
 
