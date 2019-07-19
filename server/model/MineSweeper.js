@@ -1,5 +1,3 @@
-const { log } = require('../util/logger');
-
 const FLAG = '⛳';
 const MINE = '💣';
 
@@ -299,7 +297,6 @@ exports.play = (row, col, game) => {
 
   if ( gameOver ) {
     closeBoard(mines.list, board);
-    log('Game Over');
   }
 
   return {
