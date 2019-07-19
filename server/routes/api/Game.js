@@ -6,6 +6,7 @@ const Game = app => {
   app.post('/api/game', loginRequired, create);
   app.get('/api/game/:gameId', loginRequired, get);
   app.patch('/api/game/:gameId', loginRequired, play);
+  app.patch('/api/game/flag/:gameId', loginRequired, flag);
 
   return app;
 };
@@ -14,7 +15,7 @@ const toResponse = ({ _id, board, movesLeft }) => ({ _id, board, movesLeft });
 
 const get = async (req, res) => {
   const { gameId } = req.params;
-  log(`API Game : get : about to get game [p: ${gameId}]`);
+  log(`API Game : get : about to get game [g: ${gameId}]`);
 
   try {
     const game = await GameService.get(gameId);
@@ -26,7 +27,7 @@ const get = async (req, res) => {
 
     res.send(toResponse(game));
   } catch (err) {
-    error(`API Game : get : error on get game [p: ${gameId}]`, err);
+    error(`API Game : get : error on get game [g: ${gameId}]`, err);
     res.status(500).send(err);
   }
 };
@@ -39,7 +40,7 @@ const create = async (req, res) => {
   try {
     const game = await GameService.create(user._id, name, size, mines);
 
-    log(`API Game : create : game created [p: ${game._id}]`);
+    log(`API Game : create : game created [g: ${game._id}]`);
 
     res.send(toResponse(game));
   } catch (err) {
@@ -52,7 +53,7 @@ const play = async (req, res) => {
   const { gameId } = req.params;
   const { row, col } = req.body;
 
-  log(`API Game : get : about to play game [p: ${gameId}]`);
+  log(`API Game : get : about to play game [g: ${gameId}]`);
 
   try {
     const game = await GameService.play(gameId, row, col);
@@ -65,7 +66,29 @@ const play = async (req, res) => {
     console.table(game.board);
     res.send(toResponse(game));
   } catch (err) {
-    error(`API Game : get : error on get game [p: ${gameId}]`, err);
+    error(`API Game : get : error on get game [g: ${gameId}]`, err);
+    res.status(500).send(err);
+  }
+};
+
+const flag = async (req, res) => {
+  const { gameId } = req.params;
+  const { row, col } = req.body;
+
+  log(`API Game : get : about to plant a flag [g: ${gameId}]`);
+
+  try {
+    const game = await GameService.flag(gameId, row, col);
+    if (!game) {
+      return res
+        .status(404)
+        .send({ error: 404, message: `Game ${gameId} not found` });
+    }
+
+    console.table(game.board);
+    res.send(toResponse(game));
+  } catch (err) {
+    error(`API Game : get : error on get game [g: ${gameId}]`, err);
     res.status(500).send(err);
   }
 };

@@ -55,9 +55,14 @@ const get = async (gameId, asModel) => {
   }
 };
 
-
+/**
+ * Allows to make a move over the board
+ * @param {String} gameId
+ * @param {int} row
+ * @param {int} col
+ */
 const play = async (gameId, row, col) => {
-  if (!gameId) throw new Error(`400: Game id is required. Got p:${gameId}`);
+  if (!gameId) throw new Error(`400: Game id is required. Got g:${gameId}`);
   const game = await get(gameId, true);
 
   if (!game) {
@@ -76,8 +81,33 @@ const play = async (gameId, row, col) => {
   return game;
 }
 
+/**
+ * Allows to plant a flag o a suspiciuos place
+ * @param {String} gameId
+ * @param {int} row
+ * @param {int} col
+ */
+const flag = async (gameId, row, col) => {
+  if (!gameId) throw new Error(`400: Game id is required. Got g:${gameId}`);
+  const game = await get(gameId, true);
+
+  if (!game) {
+    throw new Error(`404: Game not found g:${gameId}`);
+  }
+
+  const { board } = MineSweeper.flag(row, col, game.toJSON());
+
+  game.board = board;
+
+  await game.save();
+  await cache.set(gameId, game.toJSON());
+
+  return game;
+}
+
 module.exports = {
   create,
   get,
   play,
+  flag,
 };

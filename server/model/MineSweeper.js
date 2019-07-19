@@ -1,3 +1,5 @@
+const { log } = require('../util/logger');
+
 const FLAG = '⛳';
 const MINE = '💣';
 
@@ -274,6 +276,9 @@ class Moves {
   }
 }
 
+/**
+ * To build the game board and plant mines
+ */
 exports.build = (size, minesCount) => {
   const board = buildBoard(size);
   const mines = placeMines(size, minesCount);
@@ -282,6 +287,9 @@ exports.build = (size, minesCount) => {
   return { board, mines, movesLeft };
 }
 
+/**
+ * To make a move over a game
+ */
 exports.play = (row, col, game) => {
   let { board, mines, movesLeft: movesLeftSrc } = game;
   let gameOver = false;
@@ -291,7 +299,7 @@ exports.play = (row, col, game) => {
 
   if ( gameOver ) {
     closeBoard(mines.list, board);
-    console.log('Game Over');
+    log('Game Over');
   }
 
   return {
@@ -299,5 +307,23 @@ exports.play = (row, col, game) => {
     mines,
     movesLeft: movesLeft.value(),
     gameOver,
-  }
+  };
+}
+
+/**
+ * To plant a flag o a suspiciuos place
+ */
+exports.flag = (row, col, game) => {
+  let { board, mines, movesLeft: movesLeftSrc } = game;
+  let gameOver = false;
+  const movesLeft = new Moves(movesLeftSrc);
+
+  toggleFlag(row, col, board);
+
+  return {
+    board,
+    mines,
+    movesLeft: movesLeft.value(),
+    gameOver,
+  };
 }
