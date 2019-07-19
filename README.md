@@ -225,6 +225,25 @@ Authorizarion: Bearer _TOKEN_HERE_
 └────────────┴─────┴─────┴─────┴─────┴─────┴─────┴─────┴─────┴─────┴─────┘
 ```
 
-## Postman Collection
+## The stack
+It's a Node / Express App using MongoDb for persistence and Redis as key store.
+
+Authentication with JWT is handled with Passport.js. Database mappings and schemas are modeled with Mongoose. Frequent accessed objects, like Game State, are stored in Redis for quick access and to avoid DB latency.
+
+The Backend is architected in 3 layers:
+
+### Routers
+Build on top of express and using session and middlewares to do authorization.
+
+### Services
+Implementing Cache and Models integration. It relays on cache for fetch operations, if there is a hit, the model is hydrated and passed along. On miss, the model is fetched from the DB.
+
+In case of data updates, updates are triggered to the DB and the cache is updated to reflect the new status.
+
+### Models
+Abstracting the access to db using Mongoose to take advantage of Scheme definition and Validations.
+
+### Postman Collection
 
 https://documenter.getpostman.com/view/82035/SVSNJSjR?version=latest
+
