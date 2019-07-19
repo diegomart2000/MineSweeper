@@ -15,8 +15,6 @@ const askCoords = question => new Promise(resolve => rl
 ).then(answer => answer && answer.split(/\s/).map(coord => parseInt(coord)));
 
 const play = async () => {
-  let gameOver = false;
-
   console.log('Setting upt the game...');
 
   const size = await askNumber('What is the board size you like?');
@@ -28,7 +26,7 @@ const play = async () => {
 
   console.table(game.board);
 
-  while (!gameOver) {
+  while (!game.gameOver) {
     const move = await askCoords(`Moves left ${game.movesLeft} - Whats your move? [row, col]`);
     console.log('move', move);
 
@@ -36,7 +34,6 @@ const play = async () => {
     console.table(game.board);
 
     if ( game.gameOver ) {
-      console.table(game.board);
       console.log('Game Over');
 
     } else {
@@ -48,7 +45,13 @@ const play = async () => {
         console.table(game.board);
       }
     }
+
+    if ( !game.gameOver && !game.movesLeft ) {
+      game.gameOver = true;
+      console.log('You win!!');
+    }
   }
+
   rl.close();
 }
 

@@ -107,7 +107,7 @@ Authorizarion: Bearer _TOKEN_HERE_
 {
   name: String,
   size: Number, // Size of the board (9 -> 9 by 9)
-  quantity: Number, // Amount of mines to place
+  mines: Number, // Amount of mines to place
 }
 ```
 
@@ -224,3 +224,7 @@ Authorizarion: Bearer _TOKEN_HERE_
 │     9      │  0  │  0  │  0  │  0  │  0  │  1  │ '-' │  1  │  0  │  0  │
 └────────────┴─────┴─────┴─────┴─────┴─────┴─────┴─────┴─────┴─────┴─────┘
 ```
+
+## Postman Collection
+
+https://documenter.getpostman.com/view/82035/SVSNJSjR?version=latest
