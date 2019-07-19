@@ -12,7 +12,7 @@ const askNumber = question => new Promise(resolve => rl
 
 const askCoords = question => new Promise(resolve => rl
   .question(`${question} > `, (answer) => resolve(answer))
-).then(answer => answer && answer.split(/\s/).map(coord => parseInt(coord)));
+).then(answer => answer && answer.split(/,\s?/).map(coord => parseInt(coord)));
 
 const play = async () => {
   console.log('Setting upt the game...');
