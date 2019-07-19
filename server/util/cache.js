@@ -8,6 +8,7 @@ const set = promisify(client.set).bind(client);
 module.exports = {
 
   async set(key, value) {
+    delete value.__v;
     return set(key.toString(), JSON.stringify(value));
   },
 

@@ -9,6 +9,7 @@ const schema = new mongoose.Schema({
   board: Array,
   mines: Array,
   movesLeft: Number,
+  gameOver: Boolean,
 });
 
 const Game = mongoose.model('Game', schema);
